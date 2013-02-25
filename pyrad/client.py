@@ -66,8 +66,8 @@ class Client(host.Host):
 
     def _SocketOpen(self):
         if not self._socket:
-            self._socket = socket.socket(socket.AF_INET,
-                                       socket.SOCK_DGRAM)
+            addr_family = _get_address_family(self.server)
+            self._socket = socket.socket(addr_family, socket.SOCK_DGRAM)
             self._socket.setsockopt(socket.SOL_SOCKET,
                                     socket.SO_REUSEADDR, 1)
 
@@ -159,3 +159,14 @@ class Client(host.Host):
             return self._SendPacket(pkt, self.authport)
         else:
             return self._SendPacket(pkt, self.acctport)
+
+
+def _get_address_family(addr):
+    """Returns the address family of a network address.
+
+    :param addr: A network address (hostname or IP) string.
+    """
+    info = socket.getaddrinfo(addr, 0)
+    family = info[0][0]
+    return family
+
