@@ -166,7 +166,11 @@ def _get_address_family(addr):
 
     :param addr: A network address (hostname or IP) string.
     """
-    info = socket.getaddrinfo(addr, 0)
-    family = info[0][0]
-    return family
+    try:
+        info = socket.getaddrinfo(addr, 0)
+    except TypeError:
+        return socket.AF_INET
+    else:
+        family = info[0][0]
+        return family
 
